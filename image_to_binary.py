@@ -27,6 +27,7 @@ def image_to_binary(path):
     pixel_array = image_to_read.load()
     #print(pixel_array.size)
     #print(pixel_array.size)
+    print("->Extracting data from image....")
     row1=0
     count=0
     lim=0
