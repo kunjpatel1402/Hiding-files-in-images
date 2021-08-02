@@ -1,6 +1,6 @@
 import base64
 import random
-
+import string
 
 def gf_degree(a) :
     res = 0
@@ -42,19 +42,17 @@ def left_shift(input,num):
     byte = byte[num:8]+byte[0:num]
     return int(byte,2)
 
-def forward_S_box(bits8):
-    num = int(bits8,2)
+def forward_S_box(num):
     inverse_num = gf_invert(num)
     S_box_output = inverse_num^(left_shift(inverse_num,1))^(left_shift(inverse_num,2))^(left_shift(inverse_num,3))^(left_shift(inverse_num,4))^99
-    return decimalToBinary(S_box_output)
+    return (S_box_output)
 
-def reverse_S_box(bits8):
-    num = int(bits8,2)
+def reverse_S_box(num):
     inverse_S_box_output = left_shift(num,1)^left_shift(num,3)^left_shift(num,6)^5
-    return decimalToBinary(gf_invert(inverse_S_box_output))
+    return (gf_invert(inverse_S_box_output))
 
 def xor(byte1,byte2):
-    return decimalToBinary((int(byte1,2))^(int(byte2,2)))
+    return (byte1)^(byte2)
 
 def RotWord(Word):
     e = Word[0]
@@ -66,24 +64,24 @@ def SubWord(Word):
     return [forward_S_box(Word[0]),forward_S_box(Word[1]),forward_S_box(Word[2]),forward_S_box(Word[3])]
 
 def expand_key(key):
-    rcon = [["00000001","00000000","00000000","00000000"],
-            ["00000010","00000000","00000000","00000000"],
-            ["00000100","00000000","00000000","00000000"],
-            ["00001000","00000000","00000000","00000000"],
-            ["00010000","00000000","00000000","00000000"],
-            ["00100000","00000000","00000000","00000000"],
-            ["01000000","00000000","00000000","00000000"],
-            ["10000000","00000000","00000000","00000000"],
-            ["00011011","00000000","00000000","00000000"],
-            ["00110110","00000000","00000000","00000000"]]
+    rcon = [[1,0,0,0],
+            [2,0,0,0],
+            [4,0,0,0],
+            [8,0,0,0],
+            [16,0,0,0],
+            [32,0,0,0],
+            [64,0,0,0],
+            [128,0,0,0],
+            [27,0,0,0],
+            [54,0,0,0]]
     index=0
-    k0 = [key[index+0:index+8],key[index+8:index+16],key[index+16:index+24],key[index+24:index+32]]
+    k0 = [int(key[index+0:index+8],2),int(key[index+8:index+16],2),int(key[index+16:index+24],2),int(key[index+24:index+32],2)]
     index+=32
-    k1 = [key[index+0:index+8],key[index+8:index+16],key[index+16:index+24],key[index+24:index+32]]
+    k1 = [int(key[index+0:index+8],2),int(key[index+8:index+16],2),int(key[index+16:index+24],2),int(key[index+24:index+32],2)]
     index+=32
-    k2 = [key[index+0:index+8],key[index+8:index+16],key[index+16:index+24],key[index+24:index+32]]
+    k2 = [int(key[index+0:index+8],2),int(key[index+8:index+16],2),int(key[index+16:index+24],2),int(key[index+24:index+32],2)]
     index+=32
-    k3 = [key[index+0:index+8],key[index+8:index+16],key[index+16:index+24],key[index+24:index+32]]
+    k3 = [int(key[index+0:index+8],2),int(key[index+8:index+16],2),int(key[index+16:index+24],2),int(key[index+24:index+32],2)]
     expanded_keys=[k0,k1,k2,k3]
     for i in range(4,44):
         if (i >= 4) and (i%4 == 0):
@@ -148,27 +146,19 @@ def gf_mul(a, b):
 #gf_mul() taken from http://blog.simulacrum.me/2019/01/aes-galois/
 def MixColumns(matrix):
     for i in range(0,4):
-        a = (gf_mul(int(matrix[i][0],2),2))^(gf_mul(int(matrix[i][1],2),3))^(gf_mul(int(matrix[i][2],2),1))^(gf_mul(int(matrix[i][3],2),1))
-        a=decimalToBinary(a)
-        b = (gf_mul(int(matrix[i][0],2),1))^(gf_mul(int(matrix[i][1],2),2))^(gf_mul(int(matrix[i][2],2),3))^(gf_mul(int(matrix[i][3],2),1))
-        b=decimalToBinary(b)
-        c = (gf_mul(int(matrix[i][0],2),1))^(gf_mul(int(matrix[i][1],2),1))^(gf_mul(int(matrix[i][2],2),2))^(gf_mul(int(matrix[i][3],2),3))
-        c=decimalToBinary(c)
-        d = (gf_mul(int(matrix[i][0],2),3))^(gf_mul(int(matrix[i][1],2),1))^(gf_mul(int(matrix[i][2],2),1))^(gf_mul(int(matrix[i][3],2),2))
-        d=decimalToBinary(d)
+        a = (gf_mul(matrix[i][0],2))^(gf_mul(matrix[i][1],3))^(gf_mul(matrix[i][2],1))^(gf_mul(matrix[i][3],1))
+        b = (gf_mul(matrix[i][0],1))^(gf_mul(matrix[i][1],2))^(gf_mul(matrix[i][2],3))^(gf_mul(matrix[i][3],1))
+        c = (gf_mul(matrix[i][0],1))^(gf_mul(matrix[i][1],1))^(gf_mul(matrix[i][2],2))^(gf_mul(matrix[i][3],3))
+        d = (gf_mul(matrix[i][0],3))^(gf_mul(matrix[i][1],1))^(gf_mul(matrix[i][2],1))^(gf_mul(matrix[i][3],2))
         matrix[i]=[a,b,c,d]
     return matrix
 
 def RevMixColumns(matrix):
     for i in range(0,4):
-        a = (gf_mul(int(matrix[i][0],2),14))^(gf_mul(int(matrix[i][1],2),11))^(gf_mul(int(matrix[i][2],2),13))^(gf_mul(int(matrix[i][3],2),9))
-        a=decimalToBinary(a)
-        b = (gf_mul(int(matrix[i][0],2),9))^(gf_mul(int(matrix[i][1],2),14))^(gf_mul(int(matrix[i][2],2),11))^(gf_mul(int(matrix[i][3],2),13))
-        b=decimalToBinary(b)
-        c = (gf_mul(int(matrix[i][0],2),13))^(gf_mul(int(matrix[i][1],2),9))^(gf_mul(int(matrix[i][2],2),14))^(gf_mul(int(matrix[i][3],2),11))
-        c=decimalToBinary(c)
-        d = (gf_mul(int(matrix[i][0],2),11))^(gf_mul(int(matrix[i][1],2),13))^(gf_mul(int(matrix[i][2],2),9))^(gf_mul(int(matrix[i][3],2),14))
-        d=decimalToBinary(d)
+        a = (gf_mul(matrix[i][0],14))^(gf_mul(matrix[i][1],11))^(gf_mul(matrix[i][2],13))^(gf_mul(matrix[i][3],9))
+        b = (gf_mul(matrix[i][0],9))^(gf_mul(matrix[i][1],14))^(gf_mul(matrix[i][2],11))^(gf_mul(matrix[i][3],13))
+        c = (gf_mul(matrix[i][0],13))^(gf_mul(matrix[i][1],9))^(gf_mul(matrix[i][2],14))^(gf_mul(matrix[i][3],11))
+        d = (gf_mul(matrix[i][0],11))^(gf_mul(matrix[i][1],13))^(gf_mul(matrix[i][2],9))^(gf_mul(matrix[i][3],14))
         matrix[i]=[a,b,c,d]
     return matrix
 
@@ -212,8 +202,21 @@ def RevShiftRows(matrix):
     matrix[3][3] = temp
     return matrix
 
+def decimal_matrix(matrix):
+    for i in range(0,4):
+        for j in range(0,4):
+            matrix[i][j] = int(matrix[i][j],2)
+    return matrix
+
+
+def binary_matrix(matrix):
+    for i in range(0,4):
+        for j in range(0,4):
+            matrix[i][j] = decimalToBinary(matrix[i][j])
+    return matrix
 
 def AES_encrypt(matrix,key):
+    matrix=decimal_matrix(matrix)
     #initial round
     matrix=matrix_Xor(matrix,[key[0],key[1],key[2],key[3]])
     #main round
@@ -233,9 +236,11 @@ def AES_encrypt(matrix,key):
     #Add round key
     matrix = matrix_Xor(matrix,[key[i+0],key[i+1],key[i+2],key[i+3]])
     #print(matrix)
+    matrix=binary_matrix(matrix)
     return matrix
 
 def AES_decrypt(matrix,key):
+    matrix=decimal_matrix(matrix)
     matrix=matrix_Xor(matrix,[key[40],key[41],key[42],key[43]])
     i=36
     while i >= 4:
@@ -252,6 +257,7 @@ def AES_decrypt(matrix,key):
     matrix = RevSubBytes(matrix)
     #Add round key
     matrix = matrix_Xor(matrix,[key[i+0],key[i+1],key[i+2],key[i+3]])
+    matrix=binary_matrix(matrix)
     return matrix
 
 def matrix_to_string(matrix):
@@ -262,10 +268,19 @@ def matrix_to_string(matrix):
     return s
 
 def verify():
-    key = expand_key(bin(random.getrandbits(128)).replace("0b",""))
-    s = bin(random.getrandbits(128)).replace("0b","")
+    key=''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits + string.ascii_lowercase + string.punctuation) for _ in range(16))
+    key=str(''.join(format(ord(i), '08b') for i in key))
+    print(key,len(key))
+    key = expand_key(key)
+    #s = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits + string.ascii_lowercase + string.punctuation) for _ in range(16))
+    #s=str(''.join(format(ord(i), '08b') for i in s))
+    s="01"*64
+    print(s,len(s))
     temp = s
-    s = AES_encrypt(binary_to_matrix(s),key)
-    s = matrix_to_string(AES_decrypt(s,key))
+    s = matrix_to_string(AES_encrypt(binary_to_matrix(s),key))
+    print(s,len(s))
+    s = matrix_to_string(AES_decrypt(binary_to_matrix(s),key))
+    print(s,len(s))
     print(s==temp)
 
+#verify()
