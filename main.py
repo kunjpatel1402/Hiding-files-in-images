@@ -6,7 +6,7 @@ import string
 choice=input("1. write to image\n2. read from image\n3. anything else to break\n:")
 if choice=="1":
     file_path=input("enter full path to file to be written:")
-    image_path=input("enter full path to image you want to write to:")
+    image_path=input("enter full path to image you want to write to(jpg/jpeg/png):")
     print("Enter 1 to use your own key(should be 16 characters long), 2 for using a randomly generated key",end="")
     ans=input(":")
     if (ans=='1'):
