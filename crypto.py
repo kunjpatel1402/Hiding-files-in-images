@@ -217,6 +217,7 @@ def binary_matrix(matrix):
 
 def AES_encrypt(matrix,key):
     matrix=decimal_matrix(matrix)
+    #print(key)
     #initial round
     matrix=matrix_Xor(matrix,[key[0],key[1],key[2],key[3]])
     #main round

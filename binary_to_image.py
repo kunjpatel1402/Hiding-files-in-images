@@ -11,7 +11,7 @@ def bit32Binary(number):
     string_to_return = string_to_return + binaryString[2:len(binaryString)]
     return string_to_return
 
-def binary_to_image(path,binary_string):
+def binary_to_image(path,binary_string,output_image):
     #open image 
     image_to_read = Image.open(path)
     #print(image_to_read.size)
@@ -37,8 +37,7 @@ def binary_to_image(path,binary_string):
         new_pixel_array = image_to_write.load()
         cursorInBinaryString=0
         count=0
-        filename = input("Enter file name OR full path for image with data in it(with .png extension):")
-        image_to_write.save(filename)
+        image_to_write.save(output_image)
         #print(image_to_write.size[0],image_to_write.size[1])
         terminate=False
         for row in range(image_to_read.size[0]):
@@ -62,7 +61,7 @@ def binary_to_image(path,binary_string):
                     except:
                         print("Error")
                         terminate=True
-                        image_to_write.save(filename)
+                        image_to_write.save(output_image)
                         break
                     if temp_cell1 < 256:
                         pass
@@ -103,7 +102,7 @@ def binary_to_image(path,binary_string):
                         #print(new_pixel_array[row,col][0],pixel_array[row,col][1],pixel_array[row,col][2],end="|")
                     except:
                         print("Error")
-                        image_to_write.save(filename)
+                        image_to_write.save(output_image)
                         terminate=True
                     #print(pixel_array[row,col],end="")
                 cursorInBinaryString += 6
@@ -115,5 +114,5 @@ def binary_to_image(path,binary_string):
             row+=1
         #print("")
         #image_to_write.show()
-        image_to_write.save(filename)
+        image_to_write.save(output_image)
         print("->Data has been written in Image")
