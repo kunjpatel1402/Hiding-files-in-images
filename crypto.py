@@ -74,6 +74,7 @@ def expand_key(key):
             [128,0,0,0],
             [27,0,0,0],
             [54,0,0,0]]
+    #print(key,len(key))
     index=0
     k0 = [int(key[index+0:index+8],2),int(key[index+8:index+16],2),int(key[index+16:index+24],2),int(key[index+24:index+32],2)]
     index+=32
