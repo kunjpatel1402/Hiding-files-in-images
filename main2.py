@@ -2,7 +2,11 @@ import sys
 import read_file
 import random
 import string
-
+'''
+key should be exactly 16 characters long
+format for hiding files - main2.py <file to hide> <key/r for random key generation> <image you want to hide file in> <ouput image with file hidden in it>
+format to recover file - main2.py <image with file in it> <key> <ouput file with same extension as file hidden in image>
+'''
 arguements = list(sys.argv)
 arguements=arguements[1:]
 
